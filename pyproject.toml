@@ -16,6 +16,11 @@ dependencies = [
 [project.urls]
 Homepage = "https://web.mahenzon.ru/"
 
+[tool.pytest.ini_options]
+testpaths = [
+    "testing",
+]
+
 [dependency-groups]
 dev = [
     "black>=26.3.1",
