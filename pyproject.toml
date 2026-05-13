@@ -1,0 +1,13 @@
+[project]
+name = "py-db-autotests"
+version = "0.1.0"
+description = "Python Breakthrough autotests for Python + DB"
+requires-python = ">=3.14"
+authors = [
+  {name = "Suren Khorenyan"},
+]
+
+dependencies = []
+
+[project.urls]
+Homepage = "https://web.mahenzon.ru/"
