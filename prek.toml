@@ -20,6 +20,12 @@ id = "check-toml"
 [[repos.hooks]]
 id = "check-yaml"
 
+[[repos.hooks]]
+id = "check-added-large-files"
+
+[[repos.hooks]]
+id = "check-ast"
+
 
 [[repos]]
 repo = "https://github.com/astral-sh/ruff-pre-commit"
