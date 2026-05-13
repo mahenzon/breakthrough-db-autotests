@@ -20,6 +20,9 @@ Homepage = "https://web.mahenzon.ru/"
 testpaths = [
     "testing",
 ]
+markers = [
+    "sqlite",
+]
 
 [dependency-groups]
 dev = [
