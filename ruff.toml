@@ -78,6 +78,7 @@ select = [
 ]
 
 ignore = [
+    "RUF002",
     "RUF003",
     "TD002",
     "TD003",
@@ -86,7 +87,10 @@ ignore = [
 
 [lint.per-file-ignores]
 "testing/**.py" = [
-    "S101"
+    "S101",
+]
+"tasks/hw_01_sqlite.py" = [
+    "TC003",
 ]
 
 
