@@ -9,7 +9,9 @@ http://web.mahenzon.ru/
 
 ### Write code
 
-...
+Copy-paste full `tasks` folder to your new project and rename it to `solutions`.
+
+Run `uv sync` once to install the `solutions` package to make it discoverable by pytest.
 
 
 ### Run tests
