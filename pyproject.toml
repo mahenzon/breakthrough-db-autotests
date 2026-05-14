@@ -68,6 +68,3 @@ build-backend = "hatchling.build"
 packages = [
     "testing",
 ]
-
-[tool.hatch.build.targets.wheel.force-include]
-"testing/coverage.ini" = "testing/coverage.ini"
