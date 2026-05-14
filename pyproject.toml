@@ -18,6 +18,9 @@ dependencies = [
 [project.urls]
 Homepage = "https://web.mahenzon.ru/"
 
+[project.entry-points.pytest11]
+py_db_autotests = "testing.pytest_plugin"
+
 [tool.pytest.ini_options]
 testpaths = [
     "testing",
