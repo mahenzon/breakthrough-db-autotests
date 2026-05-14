@@ -2,10 +2,10 @@ import os
 from importlib.resources import files
 from typing import TYPE_CHECKING
 
+import pytest  # noqa: TC002
+
 if TYPE_CHECKING:
     from collections.abc import Sequence
-
-    import pytest
 
 
 def _has_option(
