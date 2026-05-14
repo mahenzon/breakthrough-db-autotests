@@ -26,8 +26,8 @@ def _coverage_config_path() -> str:
 
 def pytest_load_initial_conftests(
     early_config: pytest.Config,  # noqa: ARG001
-    args: list[str],
     parser: pytest.Parser,  # noqa: ARG001
+    args: list[str],
 ) -> None:
     """
     Configure pytest-cov automatically for student runs.
