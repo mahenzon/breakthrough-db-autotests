@@ -6,6 +6,7 @@ from faker import Faker
 
 from testing.test_hw_01_sqlite import constants
 from testing.test_hw_01_sqlite import dto
+from testing.test_hw_01_sqlite import factories
 
 import solutions.hw_01_sqlite as solution
 
@@ -44,136 +45,36 @@ def empty_db(cur: sqlite3.Cursor) -> sqlite3.Cursor:
     return cur
 
 
-class RecipeDataFactory:
-    def __init__(self, fake: Faker) -> None:
-        self.fake = fake
-
-    def __call__(
-        self,
-        *,
-        title: str | None = None,
-        description: str | None = None,
-    ) -> dto.RecipeData:
-        return dto.RecipeData(
-            title=title or self.fake.unique.sentence(nb_words=3).rstrip("."),
-            description=(
-                description
-                if description is not None
-                else self.fake.sentence()
-            ),
-        )
-
-
-class RecipeWithoutDescriptionFactory:
-    def __init__(self, fake: Faker) -> None:
-        self.fake = fake
-
-    def __call__(
-        self,
-        *,
-        title: str | None = None,
-    ) -> dto.RecipeData:
-        return dto.RecipeData(
-            title=title or self.fake.unique.sentence(nb_words=3).rstrip("."),
-            description=constants.EMPTY_STRING,
-        )
-
-
-class IngredientDataFactory:
-    def __init__(self, fake: Faker) -> None:
-        self.fake = fake
-
-    def __call__(
-        self,
-        *,
-        name: str | None = None,
-        quantity: str | None = None,
-    ) -> dto.IngredientData:
-        return dto.IngredientData(
-            name=name or self.fake.unique.word().title(),
-            quantity=(
-                quantity
-                if quantity is not None
-                else self.fake.random_element(
-                    elements=(
-                        "100g",
-                        "200g",
-                        "1 tsp",
-                        "500ml",
-                        "2 pieces",
-                    ),
-                )
-            ),
-        )
-
-
-class IngredientWithoutQuantityFactory:
-    def __init__(self, fake: Faker) -> None:
-        self.fake = fake
-
-    def __call__(
-        self,
-        *,
-        name: str | None = None,
-    ) -> dto.IngredientData:
-        return dto.IngredientData(
-            name=name or self.fake.unique.word().title(),
-            quantity=constants.EMPTY_STRING,
-        )
-
-
-class RecipeWithIngredientsFactory:
-    def __init__(
-        self,
-        recipe_factory: RecipeDataFactory,
-        ingredient_factory: IngredientDataFactory,
-    ) -> None:
-        self.recipe_factory = recipe_factory
-        self.ingredient_factory = ingredient_factory
-
-    def __call__(
-        self,
-        *,
-        ingredient_count: int = constants.EXPECTED_THREE_ROWS,
-    ) -> dto.RecipeWithIngredientsData:
-        return dto.RecipeWithIngredientsData(
-            recipe=self.recipe_factory(),
-            ingredients=[
-                self.ingredient_factory() for _ in range(ingredient_count)
-            ],
-        )
-
-
 @pytest.fixture
-def recipe_factory(fake: Faker) -> RecipeDataFactory:
-    return RecipeDataFactory(fake)
+def recipe_factory(fake: Faker) -> factories.RecipeDataFactory:
+    return factories.RecipeDataFactory(fake)
 
 
 @pytest.fixture
 def recipe_without_description_factory(
     fake: Faker,
-) -> RecipeWithoutDescriptionFactory:
-    return RecipeWithoutDescriptionFactory(fake)
+) -> factories.RecipeWithoutDescriptionFactory:
+    return factories.RecipeWithoutDescriptionFactory(fake)
 
 
 @pytest.fixture
-def ingredient_factory(fake: Faker) -> IngredientDataFactory:
-    return IngredientDataFactory(fake)
+def ingredient_factory(fake: Faker) -> factories.IngredientDataFactory:
+    return factories.IngredientDataFactory(fake)
 
 
 @pytest.fixture
 def ingredient_without_quantity_factory(
     fake: Faker,
-) -> IngredientWithoutQuantityFactory:
-    return IngredientWithoutQuantityFactory(fake)
+) -> factories.IngredientWithoutQuantityFactory:
+    return factories.IngredientWithoutQuantityFactory(fake)
 
 
 @pytest.fixture
 def recipe_with_ingredients_factory(
-    recipe_factory: RecipeDataFactory,
-    ingredient_factory: IngredientDataFactory,
-) -> RecipeWithIngredientsFactory:
-    return RecipeWithIngredientsFactory(
+    recipe_factory: factories.RecipeDataFactory,
+    ingredient_factory: factories.IngredientDataFactory,
+) -> factories.RecipeWithIngredientsFactory:
+    return factories.RecipeWithIngredientsFactory(
         recipe_factory=recipe_factory,
         ingredient_factory=ingredient_factory,
     )
@@ -182,7 +83,7 @@ def recipe_with_ingredients_factory(
 @pytest.fixture
 def inserted_recipe(
     empty_db: sqlite3.Cursor,
-    recipe_factory: RecipeDataFactory,
+    recipe_factory: factories.RecipeDataFactory,
 ) -> dto.InsertedRecipe:
     recipe = recipe_factory()
 
@@ -201,7 +102,7 @@ def inserted_recipe(
 @pytest.fixture
 def inserted_recipe_without_description(
     empty_db: sqlite3.Cursor,
-    recipe_without_description_factory: RecipeWithoutDescriptionFactory,
+    recipe_without_description_factory: factories.RecipeWoDescriptionFactory,
 ) -> dto.InsertedRecipe:
     recipe = recipe_without_description_factory()
 
@@ -219,7 +120,7 @@ def inserted_recipe_without_description(
 @pytest.fixture
 def inserted_recipe_with_ingredients(
     empty_db: sqlite3.Cursor,
-    recipe_with_ingredients_factory: RecipeWithIngredientsFactory,
+    recipe_with_ingredients_factory: factories.RecipeWithIngredientsFactory,
 ) -> dto.InsertedRecipeWithIngredients:
     data = recipe_with_ingredients_factory()
 
@@ -250,8 +151,8 @@ def inserted_recipe_with_ingredients(
 @pytest.fixture
 def two_inserted_recipes_with_ingredients(
     empty_db: sqlite3.Cursor,
-    recipe_factory: RecipeDataFactory,
-    ingredient_factory: IngredientDataFactory,
+    recipe_factory: factories.RecipeDataFactory,
+    ingredient_factory: factories.IngredientDataFactory,
 ) -> dto.TwoInsertedRecipesWithIngredients:
     first_recipe = recipe_factory()
     second_recipe = recipe_factory()
@@ -297,7 +198,7 @@ def two_inserted_recipes_with_ingredients(
 
 @pytest.fixture
 def search_recipes_data(
-    recipe_factory: RecipeDataFactory,
+    recipe_factory: factories.RecipeDataFactory,
 ) -> dto.SearchRecipesData:
     first_matching_recipe = recipe_factory(
         title=f"Chicken {constants.SEARCH_WORD}",

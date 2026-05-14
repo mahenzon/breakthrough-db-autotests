@@ -5,23 +5,19 @@ import pytest
 
 from testing.test_hw_01_sqlite import constants
 from testing.test_hw_01_sqlite import dto
+from testing.test_hw_01_sqlite import factories as f
 
 import solutions.hw_01_sqlite as solution
 
 if TYPE_CHECKING:
     from faker import Faker
 
-    from testing.test_hw_01_sqlite.conftest import RecipeDataFactory
-    from testing.test_hw_01_sqlite.conftest import (
-        RecipeWithoutDescriptionFactory,
-    )
-
 pytestmark = pytest.mark.sqlite
 
 
 def test_add_recipe_returns_id_and_inserts_recipe(
     empty_db: sqlite3.Cursor,
-    recipe_factory: RecipeDataFactory,
+    recipe_factory: f.RecipeDataFactory,
 ) -> None:
     recipe = recipe_factory()
 
@@ -49,7 +45,7 @@ def test_add_recipe_returns_id_and_inserts_recipe(
 
 def test_add_recipe_uses_default_description(
     empty_db: sqlite3.Cursor,
-    recipe_without_description_factory: RecipeWithoutDescriptionFactory,
+    recipe_without_description_factory: f.RecipeWithoutDescriptionFactory,
 ) -> None:
     recipe = recipe_without_description_factory()
 
@@ -89,7 +85,7 @@ def test_get_recipe_by_title_returns_recipe(
 
 def test_get_recipe_by_title_returns_none_for_missing_recipe(
     empty_db: sqlite3.Cursor,
-    recipe_factory: RecipeDataFactory,
+    recipe_factory: f.RecipeDataFactory,
 ) -> None:
     missing_recipe = recipe_factory()
 
@@ -103,7 +99,7 @@ def test_get_recipe_by_title_returns_none_for_missing_recipe(
 
 def test_recipe_title_must_be_unique(
     empty_db: sqlite3.Cursor,
-    recipe_factory: RecipeDataFactory,
+    recipe_factory: f.RecipeDataFactory,
     fake: Faker,
 ) -> None:
     recipe = recipe_factory()

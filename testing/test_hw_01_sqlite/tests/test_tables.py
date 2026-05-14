@@ -12,7 +12,9 @@ if TYPE_CHECKING:
 pytestmark = pytest.mark.sqlite
 
 
-def test_create_tables_creates_required_tables(cur: sqlite3.Cursor) -> None:
+def test_create_tables_creates_required_tables(
+    cur: sqlite3.Cursor,
+) -> None:
     solution.create_tables(cur, drop=True)
 
     result = cur.execute(

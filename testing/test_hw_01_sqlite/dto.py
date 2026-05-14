@@ -51,3 +51,6 @@ class SearchRecipesData:
     matching: list[RecipeData]
     non_matching: list[RecipeData]
     all: list[RecipeData]
+
+
+TwoInsertedRecipesWIngredients = TwoInsertedRecipesWithIngredients
