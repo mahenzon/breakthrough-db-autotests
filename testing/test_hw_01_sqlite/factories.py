@@ -20,9 +20,7 @@ class RecipeDataFactory:
         return dto.RecipeData(
             title=title or self.fake.unique.sentence(nb_words=3).rstrip("."),
             description=(
-                description
-                if description is not None
-                else self.fake.sentence()
+                description if description is not None else self.fake.sentence()
             ),
         )
 
@@ -101,7 +99,5 @@ class RecipeWithIngredientsFactory:
     ) -> dto.RecipeWithIngredientsData:
         return dto.RecipeWithIngredientsData(
             recipe=self.recipe_factory(),
-            ingredients=[
-                self.ingredient_factory() for _ in range(ingredient_count)
-            ],
+            ingredients=[self.ingredient_factory() for _ in range(ingredient_count)],
         )
