@@ -17,7 +17,9 @@ pytestmark = pytest.mark.sqlite
 
 @pytest.fixture(scope="session")
 def fake() -> Faker:
-    return Faker()
+    faker = Faker()
+    Faker.seed("foo-bar-constant-seed-here-to-make-reproducible-tests")
+    return faker
 
 
 @pytest.fixture
