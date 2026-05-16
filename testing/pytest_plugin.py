@@ -11,3 +11,7 @@ def pytest_configure(
         "markers",
         "sqlite: tests for SQLite homework tasks",
     )
+    config.addinivalue_line(
+        "markers",
+        "psycopg: tests for PostgreSQL / psycopg homework tasks",
+    )
