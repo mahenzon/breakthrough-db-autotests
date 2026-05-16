@@ -29,6 +29,7 @@ testpaths = [
 ]
 markers = [
     "sqlite",
+    "psycopg",
 ]
 addopts = [
     "--cov=solutions",
