@@ -74,7 +74,30 @@ def create_tables(
         drop:
             If True, delete existing tables first.
     """
-    raise NotImplementedError
+    if drop:
+        cur.execute("DROP TABLE IF EXISTS ingredients")
+        cur.execute("DROP TABLE IF EXISTS recipes")
+
+    cur.execute("""
+    CREATE TABLE IF NOT EXISTS recipes (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        title TEXT NOT NULL UNIQUE,
+        description TEXT NOT NULL DEFAULT ''
+    )
+    """)
+
+    cur.execute("""
+    CREATE TABLE IF NOT EXISTS ingredients (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        recipe_id INTEGER NOT NULL,
+        name TEXT NOT NULL,
+        quantity TEXT NOT NULL DEFAULT '',
+        CONSTRAINT fk_ingredients_recipe_id
+            FOREIGN KEY (recipe_id)
+            REFERENCES recipes (id)
+            ON DELETE CASCADE
+    )
+    """)
 
 
 def add_recipe(
@@ -109,7 +132,23 @@ def add_recipe(
             "Cheesy pasta",
         )
     """
-    raise NotImplementedError
+    parameters = (
+        title,
+        description,
+    )
+    res = cur.execute(
+        """
+    INSERT INTO recipes (title, description)
+        VALUES (?, ?)
+        RETURNING id
+    """,
+        parameters,
+    )
+    recipe_id: int = res.fetchone()["id"]
+
+    cur.connection.commit()
+
+    return recipe_id
 
 
 def add_ingredient(
@@ -149,7 +188,22 @@ def add_ingredient(
             "100g",
         )
     """
-    raise NotImplementedError
+    res = cur.execute(
+        """
+        INSERT INTO ingredients (recipe_id, name, quantity)
+            VALUES (?, ?, ?)
+            RETURNING id
+        """,
+        (
+            recipe_id,
+            name,
+            quantity,
+        ),
+    )
+
+    ingredient_id: int = res.fetchone()["id"]
+    cur.connection.commit()
+    return ingredient_id
 
 
 def get_recipe_by_title(
@@ -185,7 +239,20 @@ def get_recipe_by_title(
         if recipe is not None:
             print(recipe["title"])
     """
-    raise NotImplementedError
+    res = cur.execute(
+        """
+        SELECT id, title, description
+        FROM recipes
+        WHERE title = ?
+        """,
+        (title,),
+    )
+
+    row = res.fetchone()
+    if not row:
+        return None
+
+    return row
 
 
 def get_ingredients_for_recipe(
@@ -223,7 +290,16 @@ def get_ingredients_for_recipe(
         for ingredient in ingredients:
             print(ingredient["name"])
     """
-    raise NotImplementedError
+    res = cur.execute(
+        """
+    SELECT id, recipe_id, name, quantity
+    FROM ingredients
+        WHERE recipe_id = ?
+        ORDER BY recipe_id ASC
+    """,
+        (recipe_id,),
+    )
+    return res.fetchall()
 
 
 def update_recipe_description(
@@ -258,7 +334,18 @@ def update_recipe_description(
             "Soup with chicken and noodles",
         )
     """
-    raise NotImplementedError
+    res = cur.execute(
+        """
+        UPDATE recipes
+        SET description = ?
+            WHERE title = ?
+        """,
+        (
+            description,
+            title,
+        ),
+    )
+    return res.rowcount
 
 
 def delete_recipe(
@@ -287,7 +374,15 @@ def delete_recipe(
     Example:
         deleted_count = delete_recipe(cur, "Pancakes")
     """
-    raise NotImplementedError
+
+    res = cur.execute(
+        """
+        DELETE FROM recipes
+            where title = ?
+        """,
+        (title,),
+    )
+    return res.rowcount
 
 
 def search_recipes(
@@ -321,4 +416,16 @@ def search_recipes(
         # - Chicken Soup
         # - Tomato Soup
     """
-    raise NotImplementedError
+
+    text_for_search = "%" + text + "%"
+
+    res = cur.execute(
+        """
+        SELECT id, title, description
+        FROM recipes
+            WHERE lower(title) like lower(?)
+            ORDER BY title ASC
+        """,
+        (text_for_search,),
+    )
+    return res.fetchall()
