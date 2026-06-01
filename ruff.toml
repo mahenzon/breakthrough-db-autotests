@@ -89,7 +89,7 @@ ignore = [
 "testing/**.py" = [
     "S101",
 ]
-"tasks/hw_01_sqlite.py" = [
+"tasks/solutions/hw_01_sqlite.py" = [
     "TC003",
 ]
 
