@@ -5,3 +5,5 @@ Download `tasks` and rename to something like `db_homeworks_solutions`. Open thi
 The `solutions` package should not be renamed, tests search for `solutions` package.
 
 Edit code in homeworks files.
+
+Run `uv sync` once to install the `solutions` package to make it discoverable by pytest.
