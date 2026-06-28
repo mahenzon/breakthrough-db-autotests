@@ -65,12 +65,13 @@ for example `export TEST_CONFIG__PG__PASSWORD=password`.
 
 > [!TIP]
 > Note that marker is `psycopg` - we check your experience with this lib.
+> And running with `-vv` will show you more detailed errors.
 
 
 ```shell
 uv run \
   --with "py-db-autotests@git+https://github.com/mahenzon/breakthrough-db-autotests.git" \
-  pytest --pyargs testing -m psycopg \
+  pytest --pyargs testing -vv -m psycopg \
     --cov=solutions \
     --cov-report=term-missing \
     --cov-report=html
