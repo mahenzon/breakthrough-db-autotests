@@ -9,7 +9,7 @@ if TYPE_CHECKING:
     from testing.settings import Settings
 
 
-def validate_test_database_name(database_name: str) -> None:
+def validate_database_for_tests_name(database_name: str) -> None:
     if not database_name.startswith("test_"):
         msg = f"testing db must start with 'test_'. Got: {database_name!r}."
         raise ValueError(msg)
@@ -33,8 +33,8 @@ def make_admin_conninfo(settings: Settings) -> str:
     )
 
 
-def make_test_conninfo(settings: Settings) -> str:
-    validate_test_database_name(settings.pg.testing_db)
+def make_conninfo_for_tests(settings: Settings) -> str:
+    validate_database_for_tests_name(settings.pg.testing_db)
 
     return make_conninfo(
         host=settings.pg.host,
@@ -65,7 +65,7 @@ def create_database(
     admin_conn: psycopg.Connection,
     database_name: str,
 ) -> None:
-    validate_test_database_name(database_name)
+    validate_database_for_tests_name(database_name)
 
     admin_conn.execute(
         pg_sql.SQL("create database {}").format(
@@ -78,7 +78,7 @@ def ensure_database_exists(
     admin_conn: psycopg.Connection,
     database_name: str,
 ) -> None:
-    validate_test_database_name(database_name)
+    validate_database_for_tests_name(database_name)
 
     if not database_exists(admin_conn, database_name):
         create_database(admin_conn, database_name)

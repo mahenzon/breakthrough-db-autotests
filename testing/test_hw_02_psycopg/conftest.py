@@ -11,9 +11,18 @@ from testing.test_hw_02_psycopg import dto
 from testing.test_hw_02_psycopg.db import create_recipe_tables
 from testing.test_hw_02_psycopg.db import ensure_database_exists
 from testing.test_hw_02_psycopg.db import make_admin_conninfo
-from testing.test_hw_02_psycopg.db import make_test_conninfo
+from testing.test_hw_02_psycopg.db import make_conninfo_for_tests
 from testing.test_hw_02_psycopg.db import reset_public_schema
-from testing.test_hw_02_psycopg.db import validate_test_database_name
+from testing.test_hw_02_psycopg.db import validate_database_for_tests_name
+
+how_to_pg = """\
+No running Postgres found.
+Run in with credentials 'postgres' for db, user, pass. Port 5432.
+Or override values for test using env vars, example:
+`export TEST_CONFIG__PG__PASSWORD=password`
+For more check settings in source.
+"""
+
 
 if TYPE_CHECKING:
     from collections.abc import Generator
@@ -26,8 +35,8 @@ def fake() -> Faker:
 
 
 @pytest.fixture(scope="session")
-def test_database_name() -> str:
-    validate_test_database_name(settings.pg.testing_db)
+def database_for_tests_name() -> str:
+    validate_database_for_tests_name(settings.pg.testing_db)
     return settings.pg.testing_db
 
 
@@ -37,31 +46,37 @@ def admin_conninfo() -> str:
 
 
 @pytest.fixture(scope="session")
-def test_conninfo() -> str:
-    return make_test_conninfo(settings)
+def conninfo_for_tests() -> str:
+    return make_conninfo_for_tests(settings)
 
 
 @pytest.fixture(scope="session")
 def admin_conn(admin_conninfo: str) -> Generator[psycopg.Connection]:
-    with psycopg.connect(admin_conninfo, autocommit=True) as conn:
-        yield conn
+    try:
+        with psycopg.connect(admin_conninfo, autocommit=True) as conn:
+            yield conn
+    except psycopg.OperationalError as exc:
+        if exc.args and "connection failed" in exc.args[0]:
+            pytest.fail(how_to_pg)
+        else:
+            raise
 
 
 @pytest.fixture(scope="session")
-def test_database(
+def database_for_tests(
     admin_conn: psycopg.Connection,
-    test_database_name: str,
+    database_for_tests_name: str,
 ) -> str:
-    ensure_database_exists(admin_conn, test_database_name)
-    return test_database_name
+    ensure_database_exists(admin_conn, database_for_tests_name)
+    return database_for_tests_name
 
 
 @pytest.fixture
 def conn(
-    test_database: str,  # noqa: ARG001
-    test_conninfo: str,
+    database_for_tests: str,  # noqa: ARG001
+    conninfo_for_tests: str,
 ) -> Generator[psycopg.Connection]:
-    with psycopg.connect(test_conninfo) as connection:
+    with psycopg.connect(conninfo_for_tests) as connection:
         yield connection
 
 

@@ -55,3 +55,18 @@ uv run \
     --cov-report=term-missing \
     --cov-report=html
 ```
+
+**For Postgres + coverage:**
+
+Run Postgres with db name, username, password being `postgres`.
+Or set your values for tests using env vars,
+for example `export TEST_CONFIG__PG__PASSWORD=password`.
+
+```shell
+uv run \
+  --with "py-db-autotests@git+https://github.com/mahenzon/breakthrough-db-autotests.git" \
+  pytest --pyargs testing -m postgres \
+    --cov=solutions \
+    --cov-report=term-missing \
+    --cov-report=html
+```
