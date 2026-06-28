@@ -62,10 +62,15 @@ Run Postgres with db name, username, password being `postgres`.
 Or set your values for tests using env vars,
 for example `export TEST_CONFIG__PG__PASSWORD=password`.
 
+
+> [!TIP]
+> Note that marker is `psycopg` - we check your experience with this lib.
+
+
 ```shell
 uv run \
   --with "py-db-autotests@git+https://github.com/mahenzon/breakthrough-db-autotests.git" \
-  pytest --pyargs testing -m postgres \
+  pytest --pyargs testing -m psycopg \
     --cov=solutions \
     --cov-report=term-missing \
     --cov-report=html
