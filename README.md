@@ -65,6 +65,7 @@ for example `export TEST_CONFIG__PG__PASSWORD=password`.
 
 > [!TIP]
 > Note that marker is `psycopg` - we check your experience with this lib.
+>
 > And running with `-vv` will show you more detailed errors.
 
 
